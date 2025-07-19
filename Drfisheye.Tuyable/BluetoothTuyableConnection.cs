@@ -238,23 +238,7 @@ public class BluetoothTuyableConnection : ITuyableConnection, IDisposable
         await WriteToDevice(packetValue);
         return await task.TaskCompletionSource.Task;
     }
-
-    private async Task<bool> SendTuyaCommand(TuyableCommandCode code, byte[] msg)
-    {
-        if (_characteristic == null)
-        {
-            Logger.LogError("Characteristic not initialized");
-            return false;
-        }
-        var deviceTuyaCommandNum = _tuyaCommandNum++;
-        var context = new TuyaCommandContext(deviceTuyaCommandNum);
-        var task = CreateTuyableTask(ConnectionStuffResponseHandler, new CancellationTokenSource(1000 * 8).Token, context);
-        var packet = BuildPacket(msg, task.SeqNum, 0, code, useLocalKey: false);
-        await WriteToDevice(packet);
-        var result = await task.TaskCompletionSource.Task;
-        return result;
-    }
-
+    
     private byte[] CreatePairingMessage()
     {
         if (_localKey == null)
