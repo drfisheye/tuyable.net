@@ -1,0 +1,42 @@
+# .NET build results
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+
+# NuGet packages
+*.nupkg
+# The packages folder can be ignored if you use Package Restore
+**/packages/*
+!**/packages/build/
+!**/packages/repositories.config
+
+# Build results
+*.dll
+*.exe
+*.app
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Rider
+.idea/
+
+# Test results
+TestResults/
+*.coverage
+*.coveragexml
+
+# Others
+_ReSharper*/
+*.resharper
+*.DotSettings.user
