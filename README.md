@@ -2,6 +2,13 @@
 
 A C# library for communicating with Tuya BLE devices, though as for now really only the Smart Dot device by Petoneer (and other brandnames). Since that's the only one I own and needed code for.
 
+For general use, it's missing quite a lot. Like reacting to information requests by the device.
+
+I got lots of information from these:
+- https://github.com/redphx/poc-tuya-ble-fingerbot
+- https://github.com/PlusPlus-ua/ha_tuya_ble
+- https://urish.medium.com/reverse-engineering-a-bluetooth-lightbulb-56580fcb7546
+
 ## Features
 
 - Connect and pair with a Tuya Smart Dot over Bluetooth LE
