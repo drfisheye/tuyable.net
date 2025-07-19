@@ -1,6 +1,6 @@
 # Tuyable.NET
 
-A C# library for communicating with Tuya BLE devices, though as for now really only the Smart Dot device by Petoneer (and other brandnames).
+A C# library for communicating with Tuya BLE devices, though as for now really only the Smart Dot device by Petoneer (and other brandnames). Since that's the only one I own and needed code for.
 
 ## Features
 
