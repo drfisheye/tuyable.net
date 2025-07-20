@@ -238,7 +238,7 @@ public class BluetoothTuyableConnection : ITuyableConnection, IDisposable
         await WriteToDevice(packetValue);
         return await task.TaskCompletionSource.Task;
     }
-    
+
     private byte[] CreatePairingMessage()
     {
         if (_localKey == null)
@@ -271,10 +271,6 @@ public class BluetoothTuyableConnection : ITuyableConnection, IDisposable
         {
             Logger.LogError("Key not initialized");
             return Array.Empty<byte>();
-        }
-        if (!useLocalKey && _sessionKey == null)
-        {
-            throw new Exception("session key not set yet");
         }
         if (iv == null)
         {
@@ -375,11 +371,13 @@ public class BluetoothTuyableConnection : ITuyableConnection, IDisposable
         var data = bytes.Skip(offset + 1).ToArray();
         if (data.Length > expectedLength)
         {
-            throw new Exception("not so much data expected");
+            Logger.LogError($"not so much data expected");
+            return (false, Array.Empty<byte>(), Array.Empty<byte>(), 0, 0, TuyableCommandCode.FUN_SENDER_DEVICE_INFO);  
         }
         if (data.Length != expectedLength)
         {
-            throw new Exception("wrong length");
+            Logger.LogError($"wrong length");
+            return (false, Array.Empty<byte>(), Array.Empty<byte>(), 0, 0, TuyableCommandCode.FUN_SENDER_DEVICE_INFO);  
         }
         offset = 0;
         (var securityFlag, offset) = ReadByte(data, offset);
@@ -394,11 +392,13 @@ public class BluetoothTuyableConnection : ITuyableConnection, IDisposable
         }
         else
         {
-            throw new Exception($"securityflag {securityFlag} not supported yet");
+            Logger.LogError($"Security flag {securityFlag} not supported yet");
+            return (false, Array.Empty<byte>(), Array.Empty<byte>(), 0, 0, TuyableCommandCode.FUN_SENDER_DEVICE_INFO);  
         }
         if (key == null)
         {
-            throw new Exception("Encryption key is not initialized.");
+            Logger.LogError($"Encryption key is not initialized.");
+            return (false, Array.Empty<byte>(), Array.Empty<byte>(), 0, 0, TuyableCommandCode.FUN_SENDER_DEVICE_INFO);
         }
         var iv = data.Skip(1).Take(16).ToArray();
         var encrypted = data.Skip(17).ToArray();
@@ -416,7 +416,8 @@ public class BluetoothTuyableConnection : ITuyableConnection, IDisposable
 
         if (raw.Length < dataEndPos)
         {
-            throw new Exception("TuyaBLEDataLengthError");
+            Logger.LogError($"Unexpected data length received: {raw.Length}, expected at least {dataEndPos} bytes.");
+            return (false, Array.Empty<byte>(), Array.Empty<byte>(), 0, 0, TuyableCommandCode.FUN_SENDER_DEVICE_INFO);
         }
         if (raw.Length > dataEndPos)
         {
@@ -424,7 +425,8 @@ public class BluetoothTuyableConnection : ITuyableConnection, IDisposable
             var calcCrc = CalculateCrc16(raw.Take(dataEndPos).ToArray());
             if (crc != calcCrc)
             {
-                throw new Exception("CRC is invalid");
+                Logger.LogError($"CRC is invalid");
+                return (false, Array.Empty<byte>(), Array.Empty<byte>(), 0, 0, TuyableCommandCode.FUN_SENDER_DEVICE_INFO);
             }
         }
 
@@ -470,6 +472,8 @@ public class BluetoothTuyableConnection : ITuyableConnection, IDisposable
         _authKey = null;
         _isDisposed = true;
     }
+
+    public bool IsDisposed => _isDisposed;
 
     private void CheckDisposed()
     {
