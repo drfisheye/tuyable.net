@@ -107,7 +107,6 @@ public class BluetoothTuyableConnection : ITuyableConnection, IDisposable
                 {
                     _runningTasks.Remove(result.responseTo);
                     task.SetResult(!task.CancellationToken.IsCancellationRequested
-                        && !cancelationToken.IsCancellationRequested
                         && result.result);
                 }
             }
@@ -327,6 +326,7 @@ public class BluetoothTuyableConnection : ITuyableConnection, IDisposable
         if (task != null)
         {
             result = await task.ResponseHandler(new TuyableNotification(notification.code, msg, task.Context), task.CancellationToken);
+            Logger.LogVerbose($"Processing response: {notification.responseTo}. Notification code: {notification.code}. Canceled: {task.CancellationToken.IsCancellationRequested}, Result: {result} ");
         }
         return (result, notification.seqNum, notification.responseTo);
     }
